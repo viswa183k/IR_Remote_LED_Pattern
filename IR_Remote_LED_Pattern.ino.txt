@@ -1,0 +1,51 @@
+// IR Remote Controlled LED Pattern
+#include <IRremote.h>
+
+const int RECV_PIN = 11;
+const int ledPin = 13;
+
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+
+int pattern = 0;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+  irrecv.enableIRIn();
+  Serial.println("IR Remote LED Pattern Control Initialized");
+}
+
+void loop() {
+  if (irrecv.decode(&results)) {
+    Serial.print("Button Code: ");
+    Serial.println(results.value, HEX);
+
+    pattern++;
+    if (pattern > 2) pattern = 0;
+
+    irrecv.resume();
+  }
+
+  if (pattern == 0) {
+    digitalWrite(ledPin, HIGH);
+    delay(500);
+    digitalWrite(ledPin, LOW);
+    delay(500);
+  }
+  else if (pattern == 1) {
+    digitalWrite(ledPin, HIGH);
+    delay(200);
+    digitalWrite(ledPin, LOW);
+    delay(200);
+  }
+  else if (pattern == 2) {
+    for (int i = 0; i < 3; i++) {
+      digitalWrite(ledPin, HIGH);
+      delay(100);
+      digitalWrite(ledPin, LOW);
+      delay(100);
+    }
+    delay(500);
+  }
+}
